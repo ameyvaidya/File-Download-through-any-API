@@ -1,0 +1,27 @@
+    
+    C# Action method:
+    
+    Controller: Home
+    public ActionResult GetExportToExcel(string key, long testId)
+        {
+            var DownLoadReportPdf = "https://api.interviewmocha.com/v2/report/" + testId + "/excel";
+
+            Uri targetUri = new Uri(DownLoadReportPdf);
+            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(targetUri);
+            request.Headers.Add("x-api-key", key);
+
+            var httpResponse = (request.GetResponse() as HttpWebResponse);
+            var headervalue = httpResponse.GetResponseHeader("Content-Disposition");
+            var filename = headervalue.Replace("attachment; filename=", "");
+
+            var response = httpResponse.GetResponseStream();
+
+            return File(response, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+        }
+        
+        
+        In View:
+        
+        <form id="frmExportToExcel" class="form-inline" method="post" action="/Home/GetExportToExcel">
+          <input type="submit" value="Run" class="btn btn-primary-home btn-sm" />
+         </form>
