@@ -1,0 +1,30 @@
+class Program
+    {
+        static void Main(string[] args)
+        {
+             DoTasks().Wait();
+        }
+
+        public static async Task DoTasks()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+
+                string url = "https://api.interviewmocha.com/v2/report/{Your TestID}/excel";
+
+                client.DefaultRequestHeaders.Add("x-api-key", "Your API Key");             
+
+                HttpResponseMessage responseMessage = client.GetAsync(url).Result;
+
+                var fileName = responseMessage.Content.Headers.ContentDisposition.FileName;
+
+                string path = @"D:\" + fileName;
+
+                byte[] buffer = await responseMessage.Content.ReadAsByteArrayAsync();
+
+                File.WriteAllBytes(path, buffer);
+
+            }
+        }
+
+    }
